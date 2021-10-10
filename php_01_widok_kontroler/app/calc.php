@@ -2,6 +2,9 @@
 // KONTROLER strony kalkulatora
 require_once dirname(__FILE__).'/../config.php';
 
+// Wyłącz raportowanie błędów
+error_reporting(0);
+
 // W kontrolerze niczego nie wysyła się do klienta.
 // Wysłaniem odpowiedzi zajmie się odpowiedni widok.
 // Parametry do widoku przekazujemy przez zmienne.
