@@ -8,7 +8,7 @@
 <body>
 
 <div style="width:90%; margin: 2em auto;">
-	<a href="<?php print(_APP_URL);?>/app/credit_view.php">Kalkulator kredytowy</a>
+	<a href="<?php print(_APP_URL);?>/app/credit.php">Kalkulator kredytowy</a>
 </div>
 
 <form action="<?php print(_APP_URL);?>/app/calc.php" method="post">
