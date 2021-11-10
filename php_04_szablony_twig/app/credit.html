@@ -1,0 +1,78 @@
+{% extends "main.html" %}
+
+{% block footer %} przykładowa tresć stopki wpisana do szablonu głównego z szablonu kalkulatora {% endblock %}
+
+{% block content %}
+
+<h2 class="content-head is-center">Kalkulator Kredytowy</h2>
+
+<div class="pure-g">
+	<div class="l-box-lrg pure-u-1 pure-u-med-2-5">
+		<form class="pure-form pure-form-stacked" action="{{app_url}}/app/credit.php" method="post">
+		<fieldset>
+			<!-- Kwota -->
+			<div class="pure-control-group">
+			<label for="amount_id">Kwota kredytu (w PLN):</label>
+			<input id="amount_id" type="number" name="amount" step="0.01" value="{{amount_var}}"></label>
+			</div>
+			
+			<!-- Liczba lat -->
+			<div class="pure-control-group">
+			<label for="years_id">Liczba lat:</label>
+			<input id="years_id" type="number" name="years" value="{{years_var}}"></label>
+			</div>
+
+			<!-- Stopa oprocentowania -->
+			<div class="pure-control-group">
+			<label for="intrest_id">Stopa oprocentowania (w %):</label>
+			<input id="intrest_id" type="number" name="intrest" step="0.01" value="{{intrest_var}}"></label>
+			</div>
+
+			<!-- Wyslij -->
+			<div class="pure-controls">
+				<button type="submit" class="pure-button">Oblicz</button>
+			</div> 
+		</fieldset>
+		</form>
+	</div>
+
+	<div class="l-box-lrg pure-u-1 pure-u-med-3-5">
+
+		{# wyświeltenie listy błędów, jeśli istnieją #}
+		{% if messages is defined %}
+			{% if messages|length > 0 %} 
+				{% spaceless %}
+				<h4>Wystąpiły błędy: </h4>
+				<ol class="err">
+				{% for msg in messages %}
+					<li>{{ msg }}</li>
+				{% endfor %}
+				</ol>
+				{% endspaceless %}
+			{% endif %}
+		{% endif %}
+
+		{# wyswietlani listy informacji, jeśli istnieją #}
+		{% if infos is defined %}
+			{% if infos|length > 0 %} 
+				{% spaceless %}
+				<h4>Wystąpiły informacje: </h4>
+				<ol class="inf">
+				{% for msg in infos %}
+					<li>{{ msg }}</li>
+				{% endfor %}
+				</ol>
+				{% endspaceless %}
+			{% endif %}
+		{% endif %}
+
+		{% if result is defined %}
+			<h4>Rata Miesięczna (PLN):</h4>
+			<p class="res">
+			{{result}}
+			</p>
+		{% endif %}
+	</div>
+</div>
+
+{% endblock %}
