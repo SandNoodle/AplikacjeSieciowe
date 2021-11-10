@@ -1,0 +1,74 @@
+{extends file=$conf->root_path|cat:"/templates/main.html"}
+
+{block name=footer}przykładowa tresć stopki wpisana do szablonu głównego z szablonu kalkulatora oprocentowania{/block}
+
+{block name=content}
+
+<h2 class="content-head is-center">Kalkulator Kredytowy</h2>
+
+<div class="pure-g">
+	<div class="l-box-lrg pure-u-1 pure-u-med-2-5">
+		<form class="pure-form pure-form-stacked" action="{$conf->app_url}/app/credit.php" method="post">
+		<fieldset>
+			<!-- Kwota -->
+			<div class="pure-control-group">
+			<label for="amount">Kwota kredytu (w PLN):</label>
+			<input id="amount" type="number" name="amount" step="0.01" value="{$credit_form->amount}"></label>
+			</div>
+			
+			<!-- Liczba lat -->
+			<div class="pure-control-group">
+			<label for="years">Liczba lat:</label>
+			<input id="years" type="number" name="years" value="{$credit_form->years}"></label>
+			</div>
+
+			<!-- Stopa oprocentowania -->
+			<div class="pure-control-group">
+			<label for="intrest">Stopa oprocentowania (w %):</label>
+			<input id="intrest" type="number" name="intrest" step="0.01" value="{$credit_form->intrest}"></label>
+			</div>
+
+			<!-- Wyslij -->
+			<div class="pure-controls">
+				<input type="submit" class="pure-button" />
+			</div> 
+		</fieldset>
+		</form>
+	</div>
+
+	<div class="l-box-lrg pure-u-1 pure-u-med-3-5">
+
+		{* wyświeltenie listy błędów, jeśli istnieją *}
+		{if $msgs->isError()}
+			<h4>Wystąpiły błędy: </h4>
+			<ol class="err">
+			{foreach $msgs->getErrors() as $err}
+			{strip}
+				<li>{$err}</li>
+			{/strip}
+			{/foreach}
+			</ol>
+		{/if}
+
+		{* wyświeltenie listy informacji, jeśli istnieją *}
+		{if $msgs->isInfo()}
+			<h4>Informacje: </h4>
+			<ol class="inf">
+			{foreach $msgs->getInfos() as $inf}
+			{strip}
+				<li>{$inf}</li>
+			{/strip}
+			{/foreach}
+			</ol>
+		{/if}
+
+		{if isset($res->result)}
+			<h4>Rata Miesięczna (PLN):</h4>
+			<p class="res">
+			{$res->result}
+			</p>
+		{/if}
+	</div>
+</div>
+
+{/block}
