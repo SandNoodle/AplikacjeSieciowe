@@ -5,14 +5,21 @@ import lombok.ToString;
 import javax.persistence.*;
 
 @Entity
-@Table
+@Table(name = "elements")
 @ToString
 public class TodoElement {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	@Column(name = "id")
 	private Long id;
+	
+	@Column(name = "title", nullable = false)
 	private String title;
-	private String description; // OPTIONAL - TODO: Find if this can be annotated as such
-	private TodoElementStatus status;
+	
+	@Column(name = "description", nullable = true)
+	private String description;
+	
+	@Column(name = "status", nullable = false)
+	private String status;
 }

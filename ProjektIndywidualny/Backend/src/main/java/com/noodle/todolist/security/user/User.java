@@ -7,8 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -19,15 +19,20 @@ public class User {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "id")
 	private Long id;
+	
+	@Column(name = "username")
 	private String username;
+	
+	@Column(name = "password")
 	private String password;
 	
-	@ManyToMany(fetch = FetchType.EAGER)
-	private Collection<Role> roles = new ArrayList<>();
+	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@Column(name = "roles")
+	private Set<Role> roles = new HashSet<>();
 	
-	// TODO: Annotation - verify?
-	@ManyToMany(fetch = FetchType.EAGER)
-	private Collection<TodoList> lists = new ArrayList<>();
-	
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@Column(name = "lists")
+	private Set<TodoList> lists = new HashSet<>();
 }

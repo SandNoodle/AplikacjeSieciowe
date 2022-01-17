@@ -10,16 +10,22 @@ import java.util.Collection;
 
 @Entity
 @Data
-@Table
+@Table(name = "lists")
 @ToString
 public class TodoList {
-
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	@Column(name = "id")
 	private Long id;
-	private String title;
-	private String description; // OPTIONAL - TODO: Find if this can be annotated as such
 	
-	@OneToMany(fetch = FetchType.EAGER)
+	@Column(name = "title", nullable = false)
+	private String title;
+	
+	@Column(name = "description", nullable = true)
+	private String description;
+	
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@Column(name = "elements", nullable = true)
 	private Collection<TodoElement> elements = new ArrayList<>();
 }

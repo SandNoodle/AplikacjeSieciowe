@@ -8,6 +8,7 @@ import com.noodle.todolist.security.role.Role;
 import com.noodle.todolist.security.role.RoleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -26,13 +27,17 @@ import java.util.List;
 @Slf4j
 public class UserServiceImpl implements UserService, UserDetailsService {
 	
-	private UserRepository userRepository;
-	private RoleRepository roleRepository;
-	private TodoListRepository todoListRepository;
-	private TodoElementRepository todoElementRepository;
+	private final UserRepository userRepository;
+	private final RoleRepository roleRepository;
+	
+	private final TodoListRepository todoListRepository;
+	private final TodoElementRepository todoElementRepository;
 	
 	private final PasswordEncoder passwordEncoder;
 	
+	private final int MAX_LISTS_FOR_REGULAR_USER = 5;
+	private final int MAX_LISTS_FOR_ADMIN = 10;
+		
 	@Override
 	public User createUser(User user) {
 		if (doesUserExist(user))
@@ -72,10 +77,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	@Override
 	public Role createRole(Role role) {
 		if (role == null) throw new UserServiceException("Cannot create role out of null value.");
-		
-		boolean doesRoleAlreadyExist = roleRepository.existsById(role.getId());
-		if (doesRoleAlreadyExist) throw new UserServiceException("Role '" + role.getRoleName() + "' already exits.");
-		
 		return roleRepository.save(role);
 	}
 	
@@ -111,9 +112,15 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		if (list == null) return;
 		
 		User user = getUser(username);
+		Role adminRole = getRole("ROLE_ADMIN");
+		int maxListsForUser = user.getRoles().contains(adminRole) ? MAX_LISTS_FOR_ADMIN : MAX_LISTS_FOR_REGULAR_USER;
+		if (user.getLists().size() < maxListsForUser) {
+			log.info("Added '" + listTitle + "' list to user '" + username + "'.");
+			user.getLists().add(list);
+		} else {
+			log.info("List size exceeded for user '" + username + "'.");
+		}
 		
-		log.info("Added '" + listTitle + "' list to user '" + username + "'.");
-		user.getLists().add(list);
 	}
 	
 	@Override
@@ -144,38 +151,38 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	
 	@Override
 	public void createList(TodoList todoList) {
-		if(todoList == null) throw new UserServiceException("Cannot create null list.");
+		if (todoList == null) throw new UserServiceException("Cannot create null list.");
 		todoListRepository.save(todoList);
 	}
 	
 	@Override
 	public void deleteList(String listName) {
-		if(listName == null) throw new UserServiceException("Cannot delete list, because provided name is null.");
-
+		if (listName == null) throw new UserServiceException("Cannot delete list, because provided name is null.");
+		
 		TodoList todoList = todoListRepository.findByTitle(listName);
-		if(todoList == null) throw new UserServiceException("Cannot delete null list.");
+		if (todoList == null) throw new UserServiceException("Cannot delete null list.");
 		
 		todoListRepository.delete(todoList);
 	}
 	
 	@Override
 	public void addElementToList(String listTitle, TodoElement element) {
-		if(listTitle == null) throw new UserServiceException("Cannot add element to null list.");
-		if(element == null) throw new UserServiceException("Cannot add null element to list.");
+		if (listTitle == null) throw new UserServiceException("Cannot add element to null list.");
+		if (element == null) throw new UserServiceException("Cannot add null element to list.");
 		
 		TodoList todoList = todoListRepository.findByTitle(listTitle);
-		if(todoList == null) throw new UserServiceException("Cannot add element to null list");
+		if (todoList == null) throw new UserServiceException("Cannot add element to null list");
 		
 		todoList.getElements().add(element);
 	}
 	
 	@Override
 	public void removeElementFromList(String listTitle, String elementName) {
-		if(listTitle == null) throw new UserServiceException("Cannot remove element from null list.");
-		if(elementName == null) throw new UserServiceException("Cannot remove null element from list.");
+		if (listTitle == null) throw new UserServiceException("Cannot remove element from null list.");
+		if (elementName == null) throw new UserServiceException("Cannot remove null element from list.");
 		
 		TodoList todoList = todoListRepository.findByTitle(listTitle);
-		if(todoList == null) throw new UserServiceException("Cannot remove element from null list");
+		if (todoList == null) throw new UserServiceException("Cannot remove element from null list");
 		
 		TodoElement todoElement = todoElementRepository.findByTitle(elementName);
 		
