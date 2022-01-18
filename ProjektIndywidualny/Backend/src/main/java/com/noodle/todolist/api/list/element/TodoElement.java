@@ -8,7 +8,7 @@ import javax.persistence.*;
 @Table(name = "elements")
 @ToString
 public class TodoElement {
-
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	@Column(name = "id")

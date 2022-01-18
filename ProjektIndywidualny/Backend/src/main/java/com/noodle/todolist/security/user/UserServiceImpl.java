@@ -8,7 +8,6 @@ import com.noodle.todolist.security.role.Role;
 import com.noodle.todolist.security.role.RoleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -20,6 +19,7 @@ import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -37,7 +37,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	
 	private final int MAX_LISTS_FOR_REGULAR_USER = 5;
 	private final int MAX_LISTS_FOR_ADMIN = 10;
-		
+	
 	@Override
 	public User createUser(User user) {
 		if (doesUserExist(user))
@@ -72,6 +72,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	@Override
 	public List<User> getUsers() {
 		return userRepository.findAll();
+	}
+	
+	@Override
+	public List<String> getUsernames() {
+		List<User> users = userRepository.findAll();
+		return users.stream().map(User::getUsername).collect(Collectors.toList());
 	}
 	
 	@Override

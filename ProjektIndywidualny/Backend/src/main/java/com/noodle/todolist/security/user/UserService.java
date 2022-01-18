@@ -18,6 +18,8 @@ public interface UserService {
 	
 	List<User> getUsers();
 	
+	List<String> getUsernames();
+	
 	// Roles
 	Role createRole(Role role);
 	

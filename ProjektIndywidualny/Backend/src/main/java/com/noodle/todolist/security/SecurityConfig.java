@@ -14,24 +14,19 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	
-	@Value("${auth.encryptionSecret}")
-	private String encryptionSecret;
-	
-	@Value("${auth.authorizationTokenExpirationTime}")
-	private long authTokenExpireTime;
-	
-	@Value("${auth.refreshTokenExpirationTime}")
-	private long refreshTokenExpireTime;
-	
 	private final UserDetailsService userDetailsService;
 	private final BCryptPasswordEncoder bCryptPasswordEncoder;
+	@Value("${auth.encryptionSecret}")
+	private String encryptionSecret;
+	@Value("${auth.authorizationTokenExpirationTime}")
+	private long authTokenExpireTime;
+	@Value("${auth.refreshTokenExpirationTime}")
+	private long refreshTokenExpireTime;
 	
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder);
 	}
-	
-	
 	
 	
 }

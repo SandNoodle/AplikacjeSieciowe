@@ -1,16 +1,30 @@
 package com.noodle.todolist.security.user;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.noodle.todolist.api.list.TodoList;
 import com.noodle.todolist.security.role.Role;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.net.URI;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static com.noodle.todolist.util.Globals.EXPIRE_TIME_MINUTES;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
 @RequiredArgsConstructor
@@ -19,9 +33,20 @@ public class UserController {
 	
 	private final UserService userService;
 	
+	@Value("${auth.encryptionSecret}")
+	private String encryptionSecret;
+	
+	@Value("${auth.authorizationTokenExpirationTime}")
+	private long authTokenExpirationTime;
+	
 	@GetMapping("all/")
 	public ResponseEntity<List<User>> getUsers() {
 		return ResponseEntity.ok(userService.getUsers());
+	}
+	
+	@GetMapping("all/usernames/")
+	public ResponseEntity<List<String>> getUsernames() {
+		return ResponseEntity.ok(userService.getUsernames());
 	}
 	
 	@GetMapping("get/")
@@ -109,8 +134,49 @@ public class UserController {
 	public ResponseEntity<Collection<TodoList>> getUserLists(@RequestBody String username) {
 		return ResponseEntity.ok(userService.getUserLists(username));
 	}
-
 	
-	// TODO: Refresh token method
+	@GetMapping("token/refresh")
+	public void refreshToken(HttpServletRequest clientRequest,
+							 HttpServletResponse serverResponse) throws IOException {
+		String authorizationHeader = clientRequest.getHeader(AUTHORIZATION);
+		
+		if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+			try {
+				String refreshToken = authorizationHeader.substring("Bearer ".length());
+				Algorithm algorithm = Algorithm.HMAC256(encryptionSecret.getBytes());
+				JWTVerifier jwtVerifier = JWT.require(algorithm).build();
+				DecodedJWT decodedJWT = jwtVerifier.verify(refreshToken);
+				
+				String decodedUsername = decodedJWT.getSubject();
+				User user = userService.getUser(decodedUsername);
+				
+				String accessToken = JWT.create()
+						.withSubject(user.getUsername())
+						.withExpiresAt(new Date(System.currentTimeMillis() + authTokenExpirationTime * EXPIRE_TIME_MINUTES))
+						.withIssuer(clientRequest.getRequestURL().toString())
+						.withClaim("roles", user.getRoles()
+								.stream()
+								.map(Role::getRoleName)
+								.collect(Collectors.toList()))
+						.sign(algorithm);
+				
+				Map<String, String> tokens = new HashMap<>();
+				tokens.put("access_token", accessToken);
+				tokens.put("refresh_token", refreshToken);
+				serverResponse.setContentType(APPLICATION_JSON_VALUE);
+				new ObjectMapper().writeValue(serverResponse.getOutputStream(), tokens);
+			} catch (Exception e) {
+				serverResponse.setHeader("error", e.getMessage());
+				serverResponse.setStatus(FORBIDDEN.value());
+				
+				Map<String, String> errorMap = new HashMap<>();
+				errorMap.put("error-message", e.getMessage());
+				serverResponse.setContentType(APPLICATION_JSON_VALUE);
+				new ObjectMapper().writeValue(serverResponse.getOutputStream(), errorMap);
+			}
+		} else {
+			throw new UserServiceException("Authorization token error! Refresh token is missing");
+		}
+	}
 	
 }
