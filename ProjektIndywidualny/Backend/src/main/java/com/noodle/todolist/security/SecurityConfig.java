@@ -50,6 +50,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		CustomAuthenticationFilter authenticationFilter = new CustomAuthenticationFilter(authenticationManagerBean());
 		CustomAuthorizationFilter authorizationFilter = new CustomAuthorizationFilter();
 		
+		// Set login path
+		authenticationFilter.setFilterProcessesUrl("/api/login");
+		
 		// Set values from application.properties
 		authenticationFilter.setEncryptionSecret(encryptionSecret);
 		authenticationFilter.setAuthTokenExpireTime(authTokenExpireTime);
@@ -60,10 +63,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		// Enable CORS and disdable CSRF
 		http.cors().and().csrf().disable();
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-		
-		// TODO: Currently permit all requests.
-//		http.authorizeRequests().antMatchers("/api/user/token/refresh").permitAll();
-//		http.authorizeRequests().antMatchers("/api/user/admin/**").hasAnyAuthority("ROLE_ADMIN");
+
+		// TODO: Add mappings.
+		http.authorizeRequests().antMatchers("/api/login/**").permitAll();
+		http.authorizeRequests().antMatchers("/api/user/token/refresh").permitAll();
 		http.authorizeRequests().anyRequest().permitAll();
 		
 		http.addFilterBefore(authorizationFilter, UsernamePasswordAuthenticationFilter.class);

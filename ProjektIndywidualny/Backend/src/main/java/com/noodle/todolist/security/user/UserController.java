@@ -7,8 +7,8 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.noodle.todolist.security.role.Role;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -28,6 +28,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/api/user")
@@ -46,14 +47,20 @@ public class UserController {
 		return ResponseEntity.ok(userService.getUsers());
 	}
 	
-	@GetMapping("get/")
-	public ResponseEntity<User> getUser(@RequestBody String username) {
-		if (username == null) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+	@GetMapping("get")
+	public ResponseEntity<User> getUser(@RequestParam String username) {
+		if (username == null) {
+			log.error("Cannot get user - username was null.");
+			return ResponseEntity.badRequest().build();
+		}
 		
 		User user = userService.getUser(username);
-		if (user == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		if (user == null) {
+			log.info("User with '{}' username was not found", username);
+			return ResponseEntity.notFound().build();
+		}
 		
-		return ResponseEntity.ok(user);
+		return ResponseEntity.ok(userService.getUser(username));
 	}
 	
 	@PostMapping("create/")
@@ -139,7 +146,7 @@ public class UserController {
 				new ObjectMapper().writeValue(serverResponse.getOutputStream(), errorMap);
 			}
 		} else {
-			throw new UserServiceException("Authorization token error! Refresh token is missing");
+			log.error("Authorization token error! Refresh token is missing");
 		}
 	}
 	
