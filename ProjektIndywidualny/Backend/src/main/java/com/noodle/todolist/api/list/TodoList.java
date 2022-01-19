@@ -23,7 +23,7 @@ public class TodoList {
 	private String title;
 	private String description;
 	
-	@ManyToMany(fetch = FetchType.EAGER)
+	@OneToMany(fetch = FetchType.EAGER)
 	@JoinTable(
 			name = "lists_elements",
 			joinColumns = @JoinColumn(name = "lists_id"),
