@@ -23,6 +23,8 @@ public interface TodoListService {
 	
 	void deleteElement(String elementTitle);
 	
+	void updateElement(Long elementId, String title, String description, boolean status);
+	
 	
 	// Elements and Lists
 	

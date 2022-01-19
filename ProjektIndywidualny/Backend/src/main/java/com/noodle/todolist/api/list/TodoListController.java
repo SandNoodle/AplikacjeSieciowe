@@ -14,7 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping(path = "/api/list")
 public class TodoListController {
-
+	
 	private final TodoListService listService;
 	
 	@GetMapping("get")
@@ -30,11 +30,11 @@ public class TodoListController {
 	
 	@PostMapping("element/add/")
 	public ResponseEntity<TodoElement> addElementToList(@RequestBody TodoElement element) {
-		if(element == null) {
+		if (element == null) {
 			log.error("Element is null. Bad request");
 			return ResponseEntity.badRequest().build();
 		}
-
+		
 		// TODO: Only list we modify in this demo.
 		TodoList list = listService.getList("test_list");
 		listService.createElement(element);
@@ -46,7 +46,7 @@ public class TodoListController {
 	
 	@DeleteMapping("element/remove/{elementId}")
 	public ResponseEntity<Void> removeElementFromList(@PathVariable(name = "elementId") Long elementId) {
-		if(elementId == null) {
+		if (elementId == null) {
 			log.error("Cannot delete null element from list.");
 			return ResponseEntity.badRequest().build();
 		}
@@ -58,7 +58,17 @@ public class TodoListController {
 		
 		return ResponseEntity.ok().build();
 	}
-		
 	
-
+	@PutMapping("element/update/{elementId}")
+	public ResponseEntity<Void> updateElement(@PathVariable(name = "elementId") Long elementId,
+											  @RequestParam(required = false) String title,
+											  @RequestParam(required = false) String description,
+											  @RequestParam(required = false) boolean status) {
+		
+		listService.updateElement(elementId, title, description, status);
+		
+		return ResponseEntity.ok().build();
+	}
+	
+	
 }

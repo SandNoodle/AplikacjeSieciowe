@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @Transactional
@@ -56,6 +57,45 @@ public class TodoListServiceImpl implements TodoListService {
 		
 		log.info("Removed '" + elementTitle + "'.");
 		elementRepository.delete(element);
+	}
+	
+	@Override
+	@Transactional
+	public void updateElement(Long elementId, String title, String description, boolean status) {
+		TodoElement element = elementRepository.findById(elementId).orElseThrow(
+				() -> new ListServiceException("Cannot modify. Element was not found.")
+		);
+		
+		// Check title
+		boolean isTitleValid = title != null;
+		if (isTitleValid) {
+			boolean isNewTitleNotTheSame = !Objects.equals(title, element.getTitle());
+			boolean isTitleSizeValid = title.length() > 0;
+			boolean isTitleTaken = elementRepository.findByTitle(title) != null;
+			if (isNewTitleNotTheSame && isTitleSizeValid && !isTitleTaken) {
+				log.info("Element's '{}' title updated to '{}'.", element.getTitle(), title);
+				element.setTitle(title);
+			}
+		}
+		
+		// Check description
+		boolean isDescriptionValid = description != null;
+		if (isDescriptionValid) {
+			boolean isDescriptionNotTheSame = !Objects.equals(description, element.getDescription());
+			boolean isDescriptionSizeValid = description.length() > 0;
+			if (isDescriptionNotTheSame && isDescriptionSizeValid) {
+				log.info("Element's '{}' description updated to '{}'.", element.getDescription(), description);
+				element.setDescription(description);
+			}
+		}
+		
+		// Check status
+		boolean isStatusNotTheSame = status != element.isStatus();
+		if (isStatusNotTheSame) {
+			log.info("Element's '{}' status updated to '{}'.", element.isStatus(), status);
+			element.setStatus(status);
+		}
+	
 	}
 	
 	@Override
