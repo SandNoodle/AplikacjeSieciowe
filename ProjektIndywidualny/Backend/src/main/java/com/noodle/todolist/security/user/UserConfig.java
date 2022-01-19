@@ -5,6 +5,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 
 @Configuration
@@ -15,22 +16,22 @@ public class UserConfig {
 		return args -> {
 			
 			// Roles
-			userService.createRole(new Role(null, "ROLE_ADMIN"));
-			userService.createRole(new Role(null, "ROLE_USER"));
+			userService.createRole(new Role(null, "ROLE_ADMIN", new ArrayList<>()));
+			userService.createRole(new Role(null, "ROLE_USER", new ArrayList<>()));
 			
 			// Create Users
-			User adminUser = new User(null, "admin", "admin", new HashSet<>(), new HashSet<>());
-			User regularUser = new User(null, "user", "user", new HashSet<>(), new HashSet<>());
+			User adminUser = new User(null, "admin", "admin", new ArrayList<>());
+			User regularUser = new User(null, "user", "user", new ArrayList<>());
+			
+			// Add users to the database
+			userService.createUser(adminUser);
+			userService.createUser(regularUser);
 			
 			// Add roles to users
 			userService.addRoleToUser("admin", "ROLE_ADMIN");
 			userService.addRoleToUser("admin", "ROLE_USER");
 			
 			userService.addRoleToUser("user", "ROLE_USER");
-			
-			// Add users to the database
-			userService.createUser(adminUser);
-			userService.createUser(regularUser);
 		};
 	}
 	

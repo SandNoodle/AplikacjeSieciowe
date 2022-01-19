@@ -1,25 +1,27 @@
 package com.noodle.todolist.api.list.element;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
 import javax.persistence.*;
 
 @Entity
+@Data
 @Table(name = "elements")
 @ToString
+@RequiredArgsConstructor
+@AllArgsConstructor
 public class TodoElement {
+	
+	public static final boolean DONE = true;
+	public static final boolean NOT_DONE = false;
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
-	@Column(name = "id")
 	private Long id;
-	
-	@Column(name = "title", nullable = false)
 	private String title;
-	
-	@Column(name = "description", nullable = true)
 	private String description;
-	
-	@Column(name = "status", nullable = false)
-	private String status;
+	private boolean status;
 }

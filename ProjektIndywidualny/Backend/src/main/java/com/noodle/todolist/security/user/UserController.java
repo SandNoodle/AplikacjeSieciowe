@@ -5,7 +5,6 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.noodle.todolist.api.list.TodoList;
 import com.noodle.todolist.security.role.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,7 +17,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URI;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.noodle.todolist.util.Globals.EXPIRE_TIME_MINUTES;
@@ -44,11 +46,6 @@ public class UserController {
 		return ResponseEntity.ok(userService.getUsers());
 	}
 	
-	@GetMapping("all/usernames/")
-	public ResponseEntity<List<String>> getUsernames() {
-		return ResponseEntity.ok(userService.getUsernames());
-	}
-	
 	@GetMapping("get/")
 	public ResponseEntity<User> getUser(@RequestBody String username) {
 		if (username == null) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -57,14 +54,6 @@ public class UserController {
 		if (user == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		
 		return ResponseEntity.ok(user);
-	}
-	
-	@DeleteMapping("admin/delete/")
-	public ResponseEntity<Void> deleteUser(@RequestBody String username) {
-		if (username == null) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-		
-		userService.deleteUser(username);
-		return new ResponseEntity<>(HttpStatus.OK);
 	}
 	
 	@PostMapping("create/")
@@ -110,31 +99,6 @@ public class UserController {
 		return ResponseEntity.ok().build();
 	}
 	
-	@PostMapping("list/assign/")
-	public ResponseEntity<Void> addListToUser(@RequestBody String username,
-											  @RequestBody String listTitle) {
-		userService.addListToUser(username, listTitle);
-		return ResponseEntity.ok().build();
-	}
-	
-	@DeleteMapping("list/remove/")
-	public ResponseEntity<Void> removeListFromUser(@RequestBody String username,
-												   @RequestBody String listTitle) {
-		userService.removeListFromUser(username, listTitle);
-		return ResponseEntity.ok().build();
-	}
-	
-	@DeleteMapping("list/remove/all/")
-	public ResponseEntity<Void> removeAllListsFromUser(@RequestBody String username) {
-		userService.removeAllListsFromUser(username);
-		return ResponseEntity.ok().build();
-	}
-	
-	@GetMapping("list/get/all/")
-	public ResponseEntity<Collection<TodoList>> getUserLists(@RequestBody String username) {
-		return ResponseEntity.ok(userService.getUserLists(username));
-	}
-	
 	@GetMapping("token/refresh")
 	public void refreshToken(HttpServletRequest clientRequest,
 							 HttpServletResponse serverResponse) throws IOException {
@@ -154,7 +118,7 @@ public class UserController {
 						.withSubject(user.getUsername())
 						.withExpiresAt(new Date(System.currentTimeMillis() + authTokenExpirationTime * EXPIRE_TIME_MINUTES))
 						.withIssuer(clientRequest.getRequestURL().toString())
-						.withClaim("roles", user.getRoles()
+						.withClaim("roles", user.getUserRoles()
 								.stream()
 								.map(Role::getRoleName)
 								.collect(Collectors.toList()))

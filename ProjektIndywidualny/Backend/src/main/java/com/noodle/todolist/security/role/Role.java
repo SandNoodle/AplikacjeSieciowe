@@ -1,10 +1,13 @@
 package com.noodle.todolist.security.role;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.noodle.todolist.security.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "roles")
@@ -15,9 +18,10 @@ public class Role {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "id")
 	private Long id;
-	
-	@Column(name = "role_name")
 	private String roleName;
+	
+	@JsonIgnore
+	@ManyToMany(mappedBy = "userRoles")
+	private List<User> users;
 }
