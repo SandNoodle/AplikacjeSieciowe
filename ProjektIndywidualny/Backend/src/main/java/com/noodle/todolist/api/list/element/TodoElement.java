@@ -1,5 +1,6 @@
 package com.noodle.todolist.api.list.element;
 
+import com.noodle.todolist.api.list.TodoList;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;

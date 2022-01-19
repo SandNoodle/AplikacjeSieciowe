@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import javax.persistence.*;
-import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Data
@@ -23,6 +23,11 @@ public class TodoList {
 	private String title;
 	private String description;
 	
-	@OneToMany(fetch = FetchType.EAGER)
-	private Collection<TodoElement> elements;
+	@ManyToMany(fetch = FetchType.EAGER)
+	@JoinTable(
+			name = "lists_elements",
+			joinColumns = @JoinColumn(name = "lists_id"),
+			inverseJoinColumns = @JoinColumn(name = "elements_id")
+	)
+	private List<TodoElement> todoElements;
 }

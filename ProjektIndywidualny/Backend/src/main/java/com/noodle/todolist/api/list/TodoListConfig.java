@@ -22,12 +22,20 @@ public class TodoListConfig {
 			TodoList testList = new TodoList(null, "test_list", "This is a test list.", new ArrayList<>());
 			listService.createList(testList);
 			
-			// Add random elements to list
-			TodoElement first = new TodoElement(0L, "First element", "This is a first element displayed", DONE);
-			TodoElement second = new TodoElement(1L, "Second element", "This contains some comments", NOT_DONE);
-			TodoElement third = new TodoElement(2L, "Third element", ":C", DONE);
+			// Create elements
+			TodoElement first = new TodoElement(null, "First element", "This is a first element displayed", DONE);
+			TodoElement second = new TodoElement(null, "Second element", "This contains some comments", NOT_DONE);
+			TodoElement third = new TodoElement(null, "Third element", ":C", DONE);
+	
+			// All elements to repository
+			listService.createElement(first);
+			listService.createElement(second);
+			listService.createElement(third);
 			
-			testList.setElements(Arrays.asList(first, second, third));
+			// Add elements to list
+			listService.addElementToList(first.getTitle(), testList.getTitle());
+			listService.addElementToList(second.getTitle(), testList.getTitle());
+			listService.addElementToList(third.getTitle(), testList.getTitle());
 			
 		};
 	}

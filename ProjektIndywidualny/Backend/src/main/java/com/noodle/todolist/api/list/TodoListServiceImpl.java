@@ -6,11 +6,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 @Slf4j
 public class TodoListServiceImpl implements TodoListService {
@@ -26,8 +27,7 @@ public class TodoListServiceImpl implements TodoListService {
 	
 	@Override
 	public TodoList getList(String listTitle) {
-		Optional<TodoList> list = listRepository.findByTitle(listTitle);
-		return list.orElseThrow();
+		return listRepository.findByTitle(listTitle);
 	}
 	
 	@Override
@@ -38,48 +38,53 @@ public class TodoListServiceImpl implements TodoListService {
 	
 	@Override
 	public TodoElement getElement(String elementTitle) {
-		return elementRepository.findByTitle(elementTitle).orElseThrow();
+		return elementRepository.findByTitle(elementTitle);
 	}
 	
 	@Override
 	public void deleteElement(String elementTitle) {
-		Optional<TodoElement> element = elementRepository.findByTitle(elementTitle);
-		if (element.isEmpty()) {
-			log.info("Unable to delete null element.");
+		TodoElement element = elementRepository.findByTitle(elementTitle);
+		if (element == null) {
+			log.error("Unable to delete null element.");
 			return;
 		}
 		
-		elementRepository.delete(element.get());
+		log.info("Removed '" + elementTitle + "'.");
+		elementRepository.delete(element);
 	}
 	
 	@Override
 	public void addElementToList(String elementTitle, String listTitle) {
-		Optional<TodoElement> elementOptional = elementRepository.findByTitle(elementTitle);
-		Optional<TodoList> listOptional = listRepository.findByTitle(listTitle);
+		TodoElement element = elementRepository.findByTitle(elementTitle);
+		TodoList list = listRepository.findByTitle(listTitle);
 		
-		TodoElement element = elementOptional.orElseThrow();
-		TodoList list = listOptional.orElseThrow();
+		if (element == null) {
+			log.error("Cannot add null element to list");
+			return;
+		}
+		
+		if (list == null) {
+			log.error("Cannot add element to null list.");
+			return;
+		}
 		
 		log.info("Element '" + elementTitle + "' added to list '" + listTitle + "'.");
-		list.getElements().add(element);
+		list.getTodoElements().add(element);
 	}
 	
 	@Override
 	public List<TodoElement> getElementsFromList(String listTitle) {
 		TodoList list = getList(listTitle);
-		return new ArrayList<>(list.getElements());
+		return new ArrayList<>(list.getTodoElements());
 	}
 	
 	@Override
 	public void deleteElementFromList(String elementTitle, String listTitle) {
-		Optional<TodoElement> elementOptional = elementRepository.findByTitle(elementTitle);
-		Optional<TodoList> listOptional = listRepository.findByTitle(listTitle);
-		
-		TodoList list = listOptional.orElseThrow();
-		TodoElement element = elementOptional.orElseThrow();
+		TodoElement element = elementRepository.findByTitle(elementTitle);
+		TodoList list = listRepository.findByTitle(listTitle);
 		
 		log.info("Deleted '" + elementTitle + "' element from '" + listTitle + "' list.");
-		list.getElements().remove(element);
+		list.getTodoElements().remove(element);
 		elementRepository.delete(element); // NOTE: Element is not needed. Delete.
 	}
 }
