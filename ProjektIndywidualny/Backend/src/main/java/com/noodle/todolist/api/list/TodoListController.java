@@ -43,6 +43,21 @@ public class TodoListController {
 		// Successful
 		return ResponseEntity.ok().build();
 	}
+	
+	@DeleteMapping("element/remove/{elementId}")
+	public ResponseEntity<Void> removeElementFromList(@PathVariable(name = "elementId") Long elementId) {
+		if(elementId == null) {
+			log.error("Cannot delete null element from list.");
+			return ResponseEntity.badRequest().build();
+		}
+		
+		// TODO: Only list we modify in this demo.
+		TodoList list = listService.getList("test_list");
+		TodoElement element = listService.getElementById(elementId);
+		listService.deleteElementFromList(element.getTitle(), list.getTitle());
+		
+		return ResponseEntity.ok().build();
+	}
 		
 	
 

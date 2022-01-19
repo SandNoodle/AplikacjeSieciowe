@@ -19,6 +19,8 @@ public interface TodoListService {
 	
 	TodoElement getElement(String elementTitle);
 	
+	TodoElement getElementById(Long id);
+	
 	void deleteElement(String elementTitle);
 	
 	

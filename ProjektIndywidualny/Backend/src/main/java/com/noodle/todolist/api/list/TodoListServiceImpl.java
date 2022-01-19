@@ -42,6 +42,11 @@ public class TodoListServiceImpl implements TodoListService {
 	}
 	
 	@Override
+	public TodoElement getElementById(Long id) {
+		return elementRepository.findById(id).orElseThrow();
+	}
+	
+	@Override
 	public void deleteElement(String elementTitle) {
 		TodoElement element = elementRepository.findByTitle(elementTitle);
 		if (element == null) {
