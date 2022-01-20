@@ -22,14 +22,13 @@ const Home: NextPage = () => {
 								</button>
 							</Link>
 
-							<Link href="/admin/test_list">
+							<Link href="/admin/admin_list">
 								<button className="uppercase transition duration-200 px-20 py-4 shadow-md hover:shadow-lg cursor-pointer font-bold text-xl rounded-lg bg-sky-500 hover:bg-sky-600 text-blue-100 hover:text-blue-50 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 ring-inset">
 									Admin panel
 								</button>
 							</Link>
 
-							{/* TODO: USER PANEL */}
-							<Link href="/">
+							<Link href="/user/user_list">
 								<button className="uppercase transition duration-200 px-20 py-4 shadow-md hover:shadow-lg cursor-pointer font-bold text-xl rounded-lg bg-sky-500 hover:bg-sky-600 text-blue-100 hover:text-blue-50 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 ring-inset">
 									User panel
 								</button>

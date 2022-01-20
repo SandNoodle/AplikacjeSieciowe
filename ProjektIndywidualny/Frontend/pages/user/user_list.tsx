@@ -1,5 +1,5 @@
 import type { GetServerSideProps, NextPage } from "next";
-import { TodoElement } from "components/list/todoelement";
+import { TodoElement } from "components/list/user_todoelement";
 import { useState, useEffect } from "react";
 
 import { REST_API_IP } from "lib/server_requests";
@@ -66,8 +66,11 @@ const UserPage: NextPage = (props) => {
 		);
 	}
 
-	// Fetch elements
+	// Fetch elements from listContent
 	const elements: [TodoElementType] = listContent.todoElements;
+
+	// Sort them
+	elements.sort((a, b) => (a.id < b.id ? -1 : 1));
 
 	return (
 		<div className="w-screen h-screen justify-center items-center flex bg-gradient-to-br from-emerald-400 via-green-400 to-lime-300 overflow-x-hidden">
@@ -96,67 +99,7 @@ const UserPage: NextPage = (props) => {
 						<div className="text-md italic">
 							This list has no elements :c
 						</div>
-					)}
-
-					{/* Add new element */}
-					<div className="w-full h-full flex align-middle items-center justify-center">
-						<div className="w-1/2 h-1/2 flex gap-5 flex-col p-10 bg-white backdrop-filter backdrop-blur-lg bg-opacity-20 rounded-lg shadow-xl">
-							<h1 className="font-bold uppercase">
-								Add new element
-							</h1>
-							<form
-								onSubmit={createElement}
-								className="flex flex-col gap-2"
-							>
-								{/* Title */}
-								<input
-									className="w-full rounded-md shadow-sm p-1 text-gray-900 border-gray-400 focus:border-gray-600 border-2 outline-none transition duration-200 focus:shadow-md"
-									id="title"
-									placeholder="Title"
-									value={elementTitle}
-									onChange={(e) =>
-										setElementTitle(e.target.value)
-									}
-								></input>
-
-								{/* Desc */}
-								<input
-									className="w-full rounded-md shadow-sm p-1 text-gray-900 border-gray-400 focus:border-gray-600 border-2 outline-none transition duration-200 focus:shadow-md"
-									id="description"
-									placeholder="Description"
-									value={elementDescription}
-									onChange={(e) =>
-										setElementDescription(e.target.value)
-									}
-								></input>
-
-								{/* Status - checkbox */}
-
-								<div className="form-check align-middle flex items-center">
-									<input
-										className="form-check-input appearance-none h-8	 w-8 border border-gray-300 rounded-md bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer"
-										type="checkbox"
-										id="status"
-										checked={elementStatus}
-										onChange={(e) =>
-											setElementStatus(e.target.checked)
-										}
-									/>
-									<label className="form-check-label inline-block text-gray-800">
-										Status
-									</label>
-								</div>
-								{/* Submit */}
-								<button
-									type="submit"
-									id="login"
-									className="bg-sky-500 shadow hover:bg-sky-600 text-blue-100 hover:text-blue-50 uppercase font-bold p-2 rounded-md w-full transition duration-200 hover:shadow-md"
-								>
-									Add
-								</button>
-							</form>
-						</div>
-					</div>
+					)}				
 				</div>
 			</div>
 		</div>

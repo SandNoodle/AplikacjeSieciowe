@@ -5,13 +5,14 @@ import Router from 'next/router';
 
 function Login() {
 
-	useEffect(() => {
-		const cookie = cookieCutter.get('user_token');
-		console.log(cookie);
-		if(cookie !== undefined) {
-			Router.push('/');
-		}
-	}, []);
+	// TODO: Login, redirection, _middleware.ts
+	//useEffect(() => {
+	//	const cookie = cookieCutter.get('user_token');
+	//	if(cookie != '') {
+	//		console.log(cookie);
+	//		Router.push('/');
+	//	}
+	//}, []);
 
 	return (
 		<div className="flex justify-center items-center w-screen h-screen bg-gradient-to-tl from-sky-700 via-indigo-500 to-purple-500">
