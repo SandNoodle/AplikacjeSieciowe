@@ -15,12 +15,30 @@ const Home: NextPage = () => {
 						</h4>
 						<p className="text-sm font-medium italic">Probably.</p>
 
-						<div className="py-5">
+						<div className="py-5 flex flex-col gap-2">
 							<Link href="/login">
 								<button className="uppercase transition duration-200 px-20 py-4 shadow-md hover:shadow-lg cursor-pointer font-bold text-xl rounded-lg bg-sky-500 hover:bg-sky-600 text-blue-100 hover:text-blue-50 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 ring-inset">
 									Login
 								</button>
 							</Link>
+
+							<Link href="/admin/test_list">
+								<button className="uppercase transition duration-200 px-20 py-4 shadow-md hover:shadow-lg cursor-pointer font-bold text-xl rounded-lg bg-sky-500 hover:bg-sky-600 text-blue-100 hover:text-blue-50 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 ring-inset">
+									Admin panel
+								</button>
+							</Link>
+
+							{/* TODO: USER PANEL */}
+							<Link href="/">
+								<button className="uppercase transition duration-200 px-20 py-4 shadow-md hover:shadow-lg cursor-pointer font-bold text-xl rounded-lg bg-sky-500 hover:bg-sky-600 text-blue-100 hover:text-blue-50 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 ring-inset">
+									User panel
+								</button>
+							</Link>
+
+							{/* TODO: LOGOUT */}
+							<button className="uppercase transition duration-200 px-20 py-4 shadow-md hover:shadow-lg cursor-pointer font-bold text-xl rounded-lg bg-sky-500 hover:bg-sky-600 text-blue-100 hover:text-blue-50 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 ring-inset">
+								Logout
+							</button>
 						</div>
 					</div>
 				</div>

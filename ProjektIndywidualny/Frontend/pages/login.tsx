@@ -1,6 +1,18 @@
+import { useEffect } from 'react';
 import Link from 'next/link';
+import cookieCutter from "cookie-cutter";
+import Router from 'next/router';
 
 function Login() {
+
+	useEffect(() => {
+		const cookie = cookieCutter.get('user_token');
+		console.log(cookie);
+		if(cookie !== undefined) {
+			Router.push('/');
+		}
+	}, []);
+
 	return (
 		<div className="flex justify-center items-center w-screen h-screen bg-gradient-to-tl from-sky-700 via-indigo-500 to-purple-500">
 			<div className="flex flex-col justify-center items-center">
