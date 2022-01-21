@@ -52,7 +52,7 @@ const AdminPage: NextPage = (props) => {
 		})
 			.then(function (res) {
 				if (!res.ok) {
-					Router.push("/login");
+					Router.push("/");
 				}
 
 				return res.json();
@@ -74,7 +74,7 @@ const AdminPage: NextPage = (props) => {
 	const elements: [TodoElementType] = listContent.todoElements;
 
 	// Sort them
-	elements.sort((a, b) => (a.id < b.id ? -1 : 1));
+	if(elements) elements.sort((a, b) => (a.id < b.id ? -1 : 1));
 
 	return (
 		<div className="w-screen h-screen justify-center items-center flex bg-gradient-to-br from-emerald-400 via-green-400 to-lime-300 overflow-x-hidden">
@@ -88,7 +88,7 @@ const AdminPage: NextPage = (props) => {
 					</div>
 
 					{/* List elements */}
-					{elements.length > 0 ? (
+					{elements !== undefined && elements.length > 0 ? (
 						elements.map((e) => {
 							return (
 								<TodoElement
