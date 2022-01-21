@@ -52,7 +52,7 @@ const UserPage: NextPage = (props) => {
 	const elements: [TodoElementType] = listContent.todoElements;
 
 	// Sort them
-	if(elements) elements.sort((a, b) => (a.id < b.id ? -1 : 1));
+	if (elements) elements.sort((a, b) => (a.id < b.id ? -1 : 1));
 
 	return (
 		<div className="w-screen h-screen justify-center items-center flex bg-gradient-to-br from-emerald-400 via-green-400 to-lime-300 overflow-x-hidden">
@@ -66,7 +66,7 @@ const UserPage: NextPage = (props) => {
 					</div>
 
 					{/* List elements */}
-					{elements !== undefined  && elements.length > 0 ? (
+					{elements !== undefined && elements.length > 0 ? (
 						elements.map((e) => {
 							return (
 								<TodoElement

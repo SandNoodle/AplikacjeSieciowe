@@ -66,7 +66,7 @@ const AdminPage: NextPage = (props) => {
 	// Return empty page when loading
 	if (!listContent) {
 		return (
-			<div className="w-screen h-screen justify-center items-center flex bg-gradient-to-br from-emerald-400 via-green-400 to-lime-300"></div>
+			<div className="w-screen h-screen justify-center items-center flex bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-700 to-lime-300"></div>
 		);
 	}
 
@@ -74,10 +74,10 @@ const AdminPage: NextPage = (props) => {
 	const elements: [TodoElementType] = listContent.todoElements;
 
 	// Sort them
-	if(elements) elements.sort((a, b) => (a.id < b.id ? -1 : 1));
+	if (elements) elements.sort((a, b) => (a.id < b.id ? -1 : 1));
 
 	return (
-		<div className="w-screen h-screen justify-center items-center flex bg-gradient-to-br from-emerald-400 via-green-400 to-lime-300 overflow-x-hidden">
+		<div className="w-screen h-screen justify-center items-center flex bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-700 overflow-x-hidden">
 			<div className="w-4/5 h-screen m-auto p-10 justify-center items-center">
 				<div className="flex gap-4 flex-col p-10 justify-center items-center bg-white backdrop-filter backdrop-blur-lg bg-opacity-50 rounded-lg shadow-xl">
 					<div className="">
