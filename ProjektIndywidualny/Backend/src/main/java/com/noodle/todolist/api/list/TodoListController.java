@@ -17,18 +17,17 @@ public class TodoListController {
 	
 	private final TodoListService listService;
 	
-	@GetMapping("get")
-	public ResponseEntity<TodoList> getList(@RequestParam String listTitle) {
+	@GetMapping("user/get")
+	public ResponseEntity<TodoList> getListForUser(@RequestParam String listTitle) {
 		return ResponseEntity.ok(listService.getList(listTitle));
 	}
 	
-	// TODO: Delete when testing is complete.
-	@GetMapping("test")
-	public ResponseEntity<List<TodoElement>> elementTest() {
-		return ResponseEntity.ok(listService.getElementsFromList("test_list"));
+	@GetMapping("admin/get")
+	public ResponseEntity<TodoList> getListForAdmin(@RequestParam String listTitle) {
+		return ResponseEntity.ok(listService.getList(listTitle));
 	}
 	
-	@PostMapping("element/add/")
+	@PostMapping("admin/element/add/")
 	public ResponseEntity<TodoElement> addElementToList(@RequestBody TodoElement element) {
 		if (element == null) {
 			log.error("Element is null. Bad request");
@@ -44,7 +43,7 @@ public class TodoListController {
 		return ResponseEntity.ok().build();
 	}
 	
-	@DeleteMapping("element/remove/{elementId}")
+	@DeleteMapping("admin/element/remove/{elementId}")
 	public ResponseEntity<Void> removeElementFromList(@PathVariable(name = "elementId") Long elementId) {
 		if (elementId == null) {
 			log.error("Cannot delete null element from list.");
@@ -59,7 +58,7 @@ public class TodoListController {
 		return ResponseEntity.ok().build();
 	}
 	
-	@PutMapping("element/update/{elementId}")
+	@PutMapping("user/element/update/{elementId}")
 	public ResponseEntity<Void> updateElement(@PathVariable(name = "elementId") Long elementId,
 											  @RequestParam(required = false) String title,
 											  @RequestParam(required = false) String description,

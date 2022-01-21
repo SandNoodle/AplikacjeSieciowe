@@ -1,4 +1,6 @@
 import { REST_API_IP } from "lib/server_requests";
+import Router from "next/router";
+import Cookies from "js-cookie";
 
 type TodoListType = {
 	key: number;
@@ -11,10 +13,16 @@ type TodoListType = {
 export const TodoElement = (props: TodoListType) => {
 	const changeStatusFunction = async () => {
 		const reverseStatus = !props.elementStatus;
-		fetch(`${REST_API_IP}/api/list/element/update/${props.elementId}?status=${reverseStatus}`, {
-			method: "PUT",
-		});
-		window.location.reload();
+		fetch(
+			`${REST_API_IP}/api/list/user/element/update/${props.elementId}?status=${reverseStatus}`,
+			{
+				method: "PUT",
+				headers: {
+					'Authorization': `Bearer ${Cookies.get('user_token')}`,
+				}
+			}
+		);
+			Router.reload();
 	};
 
 	return (

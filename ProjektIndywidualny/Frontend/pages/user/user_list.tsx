@@ -2,18 +2,10 @@ import type { GetServerSideProps, NextPage } from "next";
 import { TodoElement } from "components/list/user_todoelement";
 import { useState, useEffect } from "react";
 
+import { TodoListType, TodoElementType } from "types/list_types";
 import { REST_API_IP } from "lib/server_requests";
-
-type TodoElementType = {
-	id: number;
-	title: string;
-	description: string;
-	status: boolean;
-};
-
-type TodoListType = {
-	todoElements: [TodoElementType];
-};
+import Cookies from "js-cookie";
+import Router from "next/router";
 
 const UserPage: NextPage = (props) => {
 	// TODO: Hardcoded.
@@ -28,31 +20,21 @@ const UserPage: NextPage = (props) => {
 	const [elementDescription, setElementDescription] = useState("");
 	const [elementStatus, setElementStatus] = useState(false);
 
-	const createElement = async () => {
-		fetch(`${REST_API_IP}/api/list/element/add/`, {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({
-				title: elementTitle,
-				description: elementDescription,
-				status: elementStatus ? true : false,
-			}),
-		})
-			.then((res) => res.json())
-			.then(() => {
-				// Refresh page
-				window.location.reload();
-			})
-			.catch(() => {});
-	};
-
 	// Load list
 	useEffect(() => {
 		setLoading(true);
-		fetch(`${REST_API_IP}/api/list/get?listTitle=${listTitle}`)
-			.then((res) => res.json())
+		fetch(`${REST_API_IP}/api/list/user/get?listTitle=${listTitle}`, {
+			headers: {
+				Authorization: `Bearer ${Cookies.get("user_token")}`,
+			},
+		})
+			.then(function (res) {
+				if (!res.ok) {
+					Router.push("/login");
+				}
+
+				return res.json();
+			})
 			.then((data) => {
 				setListContent(data);
 				setLoading(false);
@@ -78,8 +60,9 @@ const UserPage: NextPage = (props) => {
 				<div className="flex gap-4 flex-col p-10 justify-center items-center bg-white backdrop-filter backdrop-blur-lg bg-opacity-50 rounded-lg shadow-xl">
 					<div className="">
 						<h1 className="text-2xl font-bold uppercase">
-							{listTitle}
+							{listContent.title}
 						</h1>
+						<h2>{listContent.description}</h2>
 					</div>
 
 					{/* List elements */}
@@ -99,7 +82,7 @@ const UserPage: NextPage = (props) => {
 						<div className="text-md italic">
 							This list has no elements :c
 						</div>
-					)}				
+					)}
 				</div>
 			</div>
 		</div>

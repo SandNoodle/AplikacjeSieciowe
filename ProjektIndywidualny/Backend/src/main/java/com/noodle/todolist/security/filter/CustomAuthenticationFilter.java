@@ -49,7 +49,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 		String username = request.getParameter("username");
 		String password = request.getParameter("password");
 		
-		log.info("User {} tried to log in with password {}", username, password);
+		log.info("User '{}' tried to log in with password '{}'", username, password);
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username,
 				password);
 		return authenticationManager.authenticate(authenticationToken);

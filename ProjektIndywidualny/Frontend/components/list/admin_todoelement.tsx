@@ -1,4 +1,6 @@
 import { REST_API_IP } from "lib/server_requests";
+import Cookies from "js-cookie";
+import Router from "next/router";
 
 type TodoListType = {
 	key: number;
@@ -10,10 +12,13 @@ type TodoListType = {
 
 export const TodoElement = (props: TodoListType) => {
 	const deleteFunction = async () => {
-		fetch(`${REST_API_IP}/api/list/element/remove/${props.elementId}`, {
+		fetch(`${REST_API_IP}/api/list/admin/element/remove/${props.elementId}`, {
 			method: "DELETE",
+			headers: {
+				'Authorization': `Bearer ${Cookies.get('user_token')}`,
+			}
 		});
-		window.location.reload();
+		Router.reload();
 	};
 
 	return (

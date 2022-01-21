@@ -1,18 +1,28 @@
-import { useEffect } from 'react';
-import Link from 'next/link';
-import cookieCutter from "cookie-cutter";
-import Router from 'next/router';
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import Cookies from "js-cookie";
+import { REST_API_IP } from "lib/server_requests";
+import Router from "next/router";
 
 function Login() {
+	const [username, setUsername] = useState("");
+	const [password, setPassword] = useState("");
 
 	// TODO: Login, redirection, _middleware.ts
-	//useEffect(() => {
-	//	const cookie = cookieCutter.get('user_token');
-	//	if(cookie != '') {
-	//		console.log(cookie);
-	//		Router.push('/');
-	//	}
-	//}, []);
+
+	const loginFunction = async (e) => {
+		e.preventDefault();
+		fetch(
+			`${REST_API_IP}/api/login?username=${username}&password=${password}`
+		)
+			.then((res) => res.json())
+			.then((data) => {
+				Cookies.set("user_token", data.access_token);
+			})
+			.finally(() => {
+				Router.push("/");
+			});
+	};
 
 	return (
 		<div className="flex justify-center items-center w-screen h-screen bg-gradient-to-tl from-sky-700 via-indigo-500 to-purple-500">
@@ -21,13 +31,17 @@ function Login() {
 					<div className="px-10 py-5 bg-white backdrop-filter backdrop-blur-lg bg-opacity-60 rounded-md flex flex-col justify-center items-center shadow-xl divide-y divide-gray-400">
 						<div className="py-5">
 							{/* Login section */}
-							<form className="">
+							<form onSubmit={loginFunction} className="">
 								<p className="mb-5 text-3xl font-bold uppercase text-slate-600">
 									Login
 								</p>
 								<input
 									type="text"
 									name="username"
+									value={username}
+									onChange={(e) =>
+										setUsername(e.target.value)
+									}
 									autoComplete="off"
 									placeholder="Username"
 									required
@@ -36,6 +50,10 @@ function Login() {
 								<input
 									type="password"
 									name="password"
+									value={password}
+									onChange={(e) =>
+										setPassword(e.target.value)
+									}
 									autoComplete="off"
 									placeholder="Password"
 									required

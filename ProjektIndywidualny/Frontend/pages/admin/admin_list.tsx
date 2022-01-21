@@ -3,17 +3,9 @@ import { TodoElement } from "components/list/admin_todoelement";
 import { useState, useEffect } from "react";
 
 import { REST_API_IP } from "lib/server_requests";
-
-type TodoElementType = {
-	id: number;
-	title: string;
-	description: string;
-	status: boolean;
-};
-
-type TodoListType = {
-	todoElements: [TodoElementType];
-};
+import { TodoListType, TodoElementType } from "types/list_types";
+import Cookies from "js-cookie";
+import Router from "next/router";
 
 const AdminPage: NextPage = (props) => {
 	// TODO: Hardcoded.
@@ -22,6 +14,7 @@ const AdminPage: NextPage = (props) => {
 	// List
 	const [isLoading, setLoading] = useState(false);
 	const [listContent, setListContent] = useState<TodoListType>();
+	const [elementContent, setElementContent] = useState([]);
 
 	// Element
 	const [elementTitle, setElementTitle] = useState("");
@@ -29,10 +22,11 @@ const AdminPage: NextPage = (props) => {
 	const [elementStatus, setElementStatus] = useState(false);
 
 	const createElement = async () => {
-		fetch(`${REST_API_IP}/api/list/element/add/`, {
+		fetch(`${REST_API_IP}/api/list/admin/element/add/`, {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
+				Authorization: `Bearer ${Cookies.get("user_token")}`,
 			},
 			body: JSON.stringify({
 				title: elementTitle,
@@ -41,7 +35,7 @@ const AdminPage: NextPage = (props) => {
 			}),
 		})
 			.then((res) => res.json())
-			.then(() => {
+			.finally(() => {
 				// Refresh page
 				window.location.reload();
 			})
@@ -51,8 +45,18 @@ const AdminPage: NextPage = (props) => {
 	// Load list
 	useEffect(() => {
 		setLoading(true);
-		fetch(`${REST_API_IP}/api/list/get?listTitle=${listTitle}`)
-			.then((res) => res.json())
+		fetch(`${REST_API_IP}/api/list/admin/get?listTitle=${listTitle}`, {
+			headers: {
+				Authorization: `Bearer ${Cookies.get("user_token")}`,
+			},
+		})
+			.then(function (res) {
+				if (!res.ok) {
+					Router.push("/login");
+				}
+
+				return res.json();
+			})
 			.then((data) => {
 				setListContent(data);
 				setLoading(false);
@@ -78,8 +82,9 @@ const AdminPage: NextPage = (props) => {
 				<div className="flex gap-4 flex-col p-10 justify-center items-center bg-white backdrop-filter backdrop-blur-lg bg-opacity-50 rounded-lg shadow-xl">
 					<div className="">
 						<h1 className="text-2xl font-bold uppercase">
-							{listTitle}
+							{listContent.title}
 						</h1>
+						<h2>{listContent.description}</h2>
 					</div>
 
 					{/* List elements */}

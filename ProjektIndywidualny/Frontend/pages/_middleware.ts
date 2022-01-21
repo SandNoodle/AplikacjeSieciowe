@@ -1,11 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
-//import { setUserCookie } from '@lib/auth'
+import Cookies from "js-cookie";
 
 export function middleware(req: NextRequest) {
 	// Add cookie to request
+	req.headers.set('user_token', `Bearer ${Cookies.get('user_token')}`);
 
-	//const cookie.get
+	const res = NextResponse.next();
 
-	// TODO: add return
-	return;
+	if(res.status == 403) {
+		return NextResponse.redirect('/login');
+	}
 }
