@@ -27,6 +27,11 @@ const AdminPage: NextPage = (props) => {
 	const [changeDescription, setChangeDescription] = useState("");
 	const [changeStatus, setChangeStatus] = useState(false);
 
+	// Filtering
+	const [filterAll, setFilterAll] = useState(true);
+	const [filterOn, setFilterOn] = useState(false);
+	const [filterOff, setFilterOff] = useState(false);
+
 	const createElement = async () => {
 		fetch(`${REST_API_IP}/api/list/admin/element/add/`, {
 			method: "POST",
@@ -49,13 +54,18 @@ const AdminPage: NextPage = (props) => {
 	};
 
 	const changeElement = async () => {
-		fetch(`${REST_API_IP}/api/list/user/element/update/${elementId}?title=${changeTitle}&description=${changeDescription}&status=${changeStatus ? true : false}`, {
-			method: "PUT",
-			headers: {
-				"Content-Type": "application/json",
-				Authorization: `Bearer ${Cookies.get("user_token")}`,
+		fetch(
+			`${REST_API_IP}/api/list/user/element/update/${elementId}?title=${changeTitle}&description=${changeDescription}&status=${
+				changeStatus ? true : false
+			}`,
+			{
+				method: "PUT",
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${Cookies.get("user_token")}`,
+				},
 			}
-		})
+		)
 			.then((res) => res.json())
 			.finally(() => {
 				// Refresh page
@@ -109,18 +119,101 @@ const AdminPage: NextPage = (props) => {
 						<h2>{listContent.description}</h2>
 					</div>
 
+					{/* Filter */}
+					<div className="">
+						<h4 className="">Filter:</h4>
+						<div className="">
+							<div className="form-check form-check-inline">
+								<input
+									className="form-check-input form-check-input appearance-none rounded-full h-4 w-4 border border-black bg-white checked:bg-black checked:border-black focus:outline-none transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer"
+									type="radio"
+									name="filter"
+									id="radio0"
+									checked={filterAll}
+									onChange={(e) => {
+										setFilterAll(true);
+										setFilterOn(false);
+										setFilterOff(false);
+									}}
+								/>
+								<label
+									className="form-check-label inline-block text-gray-800"
+									htmlFor="filter0"
+								>
+									All
+								</label>
+							</div>
+
+							<div className="form-check form-check-inline">
+								<input
+									className="form-check-input form-check-input appearance-none rounded-full h-4 w-4 border border-black bg-white checked:bg-black checked:border-black focus:outline-none transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer"
+									type="radio"
+									id="radio1"
+									name="filter"
+									checked={filterOn}
+									onChange={(e) => {
+										setFilterAll(false);
+										setFilterOn(true);
+										setFilterOff(false);
+									}}
+								/>
+								<label
+									className="form-check-label inline-block text-gray-800"
+									htmlFor="filter1"
+								>
+									Enabled
+								</label>
+							</div>
+
+							<div className="form-check form-check-inline">
+								<input
+									className="form-check-input form-check-input appearance-none rounded-full h-4 w-4 border border-black bg-white checked:bg-black checked:border-black focus:outline-none transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer"
+									type="radio"
+									id="radio2"
+									name="filter"
+									checked={filterOff}
+									onChange={(e) => {
+										setFilterAll(false);
+										setFilterOn(false);
+										setFilterOff(true);
+									}}
+								/>
+								<label
+									className="form-check-label inline-block text-gray-800"
+									htmlFor="filter2"
+								>
+									Disabled
+								</label>
+							</div>
+						</div>
+					</div>
+
 					{/* List elements */}
 					{elements !== undefined && elements.length > 0 ? (
 						elements.map((e) => {
-							return (
-								<TodoElement
-									key={e.id}
-									elementId={e.id}
-									elementTitle={e.title}
-									elementDescription={e.description}
-									elementStatus={e.status}
-								/>
-							);
+							// TODO: BAD HACK
+							if(e.status == true && filterOn || filterAll) {
+								return (
+									<TodoElement
+										key={e.id}
+										elementId={e.id}
+										elementTitle={e.title}
+										elementDescription={e.description}
+										elementStatus={e.status}
+									/>
+								);
+							}
+							if(e.status == false && filterOff || filterAll) {
+								return (
+									<TodoElement
+										key={e.id}
+										elementId={e.id}
+										elementTitle={e.title}
+										elementDescription={e.description}
+										elementStatus={e.status}
+									/>
+								);								
+							}
 						})
 					) : (
 						<div className="text-md italic">
