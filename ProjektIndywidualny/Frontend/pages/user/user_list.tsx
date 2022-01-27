@@ -20,6 +20,11 @@ const UserPage: NextPage = (props) => {
 	const [elementDescription, setElementDescription] = useState("");
 	const [elementStatus, setElementStatus] = useState(false);
 
+	// Filtering
+	const [filterAll, setFilterAll] = useState(true);
+	const [filterOn, setFilterOn] = useState(false);
+	const [filterOff, setFilterOff] = useState(false);
+
 	// Load list
 	useEffect(() => {
 		setLoading(true);
@@ -63,6 +68,75 @@ const UserPage: NextPage = (props) => {
 							{listContent.title}
 						</h1>
 						<h2>{listContent.description}</h2>
+					</div>
+
+									{/* Filter */}
+									<div className="">
+						<h4 className="">Filter:</h4>
+						<div className="">
+							<div className="form-check form-check-inline">
+								<input
+									className="form-check-input form-check-input appearance-none rounded-full h-4 w-4 border border-black bg-white checked:bg-black checked:border-black focus:outline-none transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer"
+									type="radio"
+									name="filter"
+									id="radio0"
+									checked={filterAll}
+									onChange={(e) => {
+										setFilterAll(true);
+										setFilterOn(false);
+										setFilterOff(false);
+									}}
+								/>
+								<label
+									className="form-check-label inline-block text-gray-800"
+									htmlFor="filter0"
+								>
+									All
+								</label>
+							</div>
+
+							<div className="form-check form-check-inline">
+								<input
+									className="form-check-input form-check-input appearance-none rounded-full h-4 w-4 border border-black bg-white checked:bg-black checked:border-black focus:outline-none transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer"
+									type="radio"
+									id="radio1"
+									name="filter"
+									checked={filterOn}
+									onChange={(e) => {
+										setFilterAll(false);
+										setFilterOn(true);
+										setFilterOff(false);
+									}}
+								/>
+								<label
+									className="form-check-label inline-block text-gray-800"
+									htmlFor="filter1"
+								>
+									Enabled
+								</label>
+							</div>
+
+							<div className="form-check form-check-inline">
+								<input
+									className="form-check-input form-check-input appearance-none rounded-full h-4 w-4 border border-black bg-white checked:bg-black checked:border-black focus:outline-none transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer"
+									type="radio"
+									id="radio2"
+									name="filter"
+									checked={filterOff}
+									onChange={(e) => {
+										setFilterAll(false);
+										setFilterOn(false);
+										setFilterOff(true);
+									}}
+								/>
+								<label
+									className="form-check-label inline-block text-gray-800"
+									htmlFor="filter2"
+								>
+									Disabled
+								</label>
+							</div>
+						</div>
 					</div>
 
 					{/* List elements */}
