@@ -30,6 +30,10 @@ export const TodoElement = (props: TodoListType) => {
 					}`}
 				></div>
 
+				<div className="font-bold text-black">
+					ID: {props.elementId}
+				</div>
+
 				<div className="flex flex-col">
 					<h1 className="font-bold uppercase">
 						{props.elementTitle}

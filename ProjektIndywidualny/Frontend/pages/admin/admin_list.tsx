@@ -16,10 +16,16 @@ const AdminPage: NextPage = (props) => {
 	const [listContent, setListContent] = useState<TodoListType>();
 	const [elementContent, setElementContent] = useState([]);
 
-	// Element
+	// Element Create
 	const [elementTitle, setElementTitle] = useState("");
 	const [elementDescription, setElementDescription] = useState("");
 	const [elementStatus, setElementStatus] = useState(false);
+
+	// Element change
+	const [elementId, setElementId] = useState("");
+	const [changeTitle, setChangeTitle] = useState("");
+	const [changeDescription, setChangeDescription] = useState("");
+	const [changeStatus, setChangeStatus] = useState(false);
 
 	const createElement = async () => {
 		fetch(`${REST_API_IP}/api/list/admin/element/add/`, {
@@ -33,6 +39,22 @@ const AdminPage: NextPage = (props) => {
 				description: elementDescription,
 				status: elementStatus ? true : false,
 			}),
+		})
+			.then((res) => res.json())
+			.finally(() => {
+				// Refresh page
+				window.location.reload();
+			})
+			.catch(() => {});
+	};
+
+	const changeElement = async () => {
+		fetch(`${REST_API_IP}/api/list/user/element/update/${elementId}?title=${changeTitle}&description=${changeDescription}&status=${changeStatus ? true : false}`, {
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json",
+				Authorization: `Bearer ${Cookies.get("user_token")}`,
+			}
 		})
 			.then((res) => res.json())
 			.finally(() => {
@@ -105,64 +127,142 @@ const AdminPage: NextPage = (props) => {
 							This list has no elements :c
 						</div>
 					)}
-
-					{/* Add new element */}
-					<div className="w-full h-full flex align-middle items-center justify-center">
-						<div className="w-1/2 h-1/2 flex gap-5 flex-col p-10 bg-white backdrop-filter backdrop-blur-lg bg-opacity-20 rounded-lg shadow-xl">
-							<h1 className="font-bold uppercase">
-								Add new element
-							</h1>
-							<form
-								onSubmit={createElement}
-								className="flex flex-col gap-2"
-							>
-								{/* Title */}
-								<input
-									className="w-full rounded-md shadow-sm p-1 text-gray-900 border-gray-400 focus:border-gray-600 border-2 outline-none transition duration-200 focus:shadow-md"
-									id="title"
-									placeholder="Title"
-									value={elementTitle}
-									onChange={(e) =>
-										setElementTitle(e.target.value)
-									}
-								></input>
-
-								{/* Desc */}
-								<input
-									className="w-full rounded-md shadow-sm p-1 text-gray-900 border-gray-400 focus:border-gray-600 border-2 outline-none transition duration-200 focus:shadow-md"
-									id="description"
-									placeholder="Description"
-									value={elementDescription}
-									onChange={(e) =>
-										setElementDescription(e.target.value)
-									}
-								></input>
-
-								{/* Status - checkbox */}
-
-								<div className="form-check align-middle flex items-center">
-									<input
-										className="form-check-input appearance-none h-8	 w-8 border border-gray-300 rounded-md bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer"
-										type="checkbox"
-										id="status"
-										checked={elementStatus}
-										onChange={(e) =>
-											setElementStatus(e.target.checked)
-										}
-									/>
-									<label className="form-check-label inline-block text-gray-800">
-										Status
-									</label>
-								</div>
-								{/* Submit */}
-								<button
-									type="submit"
-									id="login"
-									className="bg-sky-500 shadow hover:bg-sky-600 text-blue-100 hover:text-blue-50 uppercase font-bold p-2 rounded-md w-full transition duration-200 hover:shadow-md"
+					<div className="flex w-full h-full gap-12">
+						{/* Add new element */}
+						<div className="w-full h-full flex align-middle items-center justify-center">
+							<div className="w-full h-1/2 flex gap-5 flex-col p-10 bg-white backdrop-filter backdrop-blur-lg bg-opacity-20 rounded-lg shadow-xl">
+								<h1 className="font-bold uppercase">
+									Add new element
+								</h1>
+								<form
+									onSubmit={createElement}
+									className="flex flex-col gap-2"
 								>
-									Add
-								</button>
-							</form>
+									{/* Title */}
+									<input
+										className="w-full rounded-md shadow-sm p-1 text-gray-900 border-gray-400 focus:border-gray-600 border-2 outline-none transition duration-200 focus:shadow-md"
+										id="title"
+										placeholder="Title"
+										value={elementTitle}
+										onChange={(e) =>
+											setElementTitle(e.target.value)
+										}
+									></input>
+
+									{/* Desc */}
+									<input
+										className="w-full rounded-md shadow-sm p-1 text-gray-900 border-gray-400 focus:border-gray-600 border-2 outline-none transition duration-200 focus:shadow-md"
+										id="description"
+										placeholder="Description"
+										value={elementDescription}
+										onChange={(e) =>
+											setElementDescription(
+												e.target.value
+											)
+										}
+									></input>
+
+									{/* Status - checkbox */}
+
+									<div className="form-check align-middle flex items-center">
+										<input
+											className="form-check-input appearance-none h-8	 w-8 border border-gray-300 rounded-md bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer"
+											type="checkbox"
+											id="status"
+											checked={elementStatus}
+											onChange={(e) =>
+												setElementStatus(
+													e.target.checked
+												)
+											}
+										/>
+										<label className="form-check-label inline-block text-gray-800">
+											Status
+										</label>
+									</div>
+									{/* Submit */}
+									<button
+										type="submit"
+										id="login"
+										className="bg-sky-500 shadow hover:bg-sky-600 text-blue-100 hover:text-blue-50 uppercase font-bold p-2 rounded-md w-full transition duration-200 hover:shadow-md"
+									>
+										Add
+									</button>
+								</form>
+							</div>
+						</div>
+
+						{/* Change element */}
+						<div className="w-full h-full flex align-middle items-center justify-center">
+							<div className="w-full h-1/2 flex gap-5 flex-col p-10 bg-white backdrop-filter backdrop-blur-lg bg-opacity-20 rounded-lg shadow-xl">
+								<h1 className="font-bold uppercase">
+									Change existing element
+								</h1>
+								<form
+									onSubmit={changeElement}
+									className="flex flex-col gap-2"
+								>
+									{/* ID */}
+									<input
+										className="w-full rounded-md shadow-sm p-1 text-gray-900 border-gray-400 focus:border-gray-600 border-2 outline-none transition duration-200 focus:shadow-md"
+										id="id"
+										placeholder="Element ID"
+										value={elementId}
+										onChange={(e) =>
+											setElementId(e.target.value)
+										}
+									></input>
+
+									{/* Title */}
+									<input
+										className="w-full rounded-md shadow-sm p-1 text-gray-900 border-gray-400 focus:border-gray-600 border-2 outline-none transition duration-200 focus:shadow-md"
+										id="title"
+										placeholder="Title"
+										value={changeTitle}
+										onChange={(e) =>
+											setChangeTitle(e.target.value)
+										}
+									></input>
+
+									{/* Desc */}
+									<input
+										className="w-full rounded-md shadow-sm p-1 text-gray-900 border-gray-400 focus:border-gray-600 border-2 outline-none transition duration-200 focus:shadow-md"
+										id="description"
+										placeholder="Description"
+										value={changeDescription}
+										onChange={(e) =>
+											setChangeDescription(e.target.value)
+										}
+									></input>
+
+									{/* Status - checkbox */}
+
+									<div className="form-check align-middle flex items-center">
+										<input
+											className="form-check-input appearance-none h-8	 w-8 border border-gray-300 rounded-md bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer"
+											type="checkbox"
+											id="status"
+											checked={changeStatus}
+											onChange={(e) =>
+												setChangeStatus(
+													e.target.checked
+												)
+											}
+										/>
+										<label className="form-check-label inline-block text-gray-800">
+											Status
+										</label>
+									</div>
+									{/* Submit */}
+									<button
+										type="submit"
+										id="login"
+										className="bg-sky-500 shadow hover:bg-sky-600 text-blue-100 hover:text-blue-50 uppercase font-bold p-2 rounded-md w-full transition duration-200 hover:shadow-md"
+									>
+										Change
+									</button>
+								</form>
+							</div>
 						</div>
 					</div>
 				</div>
