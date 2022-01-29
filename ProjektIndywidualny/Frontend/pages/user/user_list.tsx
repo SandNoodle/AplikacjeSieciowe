@@ -142,15 +142,29 @@ const UserPage: NextPage = (props) => {
 					{/* List elements */}
 					{elements !== undefined && elements.length > 0 ? (
 						elements.map((e) => {
-							return (
-								<TodoElement
-									key={e.id}
-									elementId={e.id}
-									elementTitle={e.title}
-									elementDescription={e.description}
-									elementStatus={e.status}
-								/>
-							);
+							// TODO: BAD HACK
+							if(e.status == true && filterOn || filterAll) {
+								return (
+									<TodoElement
+										key={e.id}
+										elementId={e.id}
+										elementTitle={e.title}
+										elementDescription={e.description}
+										elementStatus={e.status}
+									/>
+								);
+							}
+							if(e.status == false && filterOff || filterAll) {
+								return (
+									<TodoElement
+										key={e.id}
+										elementId={e.id}
+										elementTitle={e.title}
+										elementDescription={e.description}
+										elementStatus={e.status}
+									/>
+								);								
+							}
 						})
 					) : (
 						<div className="text-md italic">
