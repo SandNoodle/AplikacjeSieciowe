@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static com.noodle.todolist.api.list.element.TodoElement.DONE;
 import static com.noodle.todolist.api.list.element.TodoElement.NOT_DONE;
@@ -36,6 +37,15 @@ public class TodoListConfig {
 			listService.addElementToList(first.getTitle(), testList.getTitle());
 			listService.addElementToList(second.getTitle(), testList.getTitle());
 			listService.addElementToList(third.getTitle(), testList.getTitle());
+			
+			// Create random N elements
+			for(int i = 0; i < 23; i++) {
+				String tempTitle = "TEMP ELEMENT: " + i;
+				boolean status = ThreadLocalRandom.current().nextBoolean();
+				TodoElement tempElement = new TodoElement(null, tempTitle, "SOME RANDOM DESCRIPTION", status);
+				listService.createElement(tempElement);
+				listService.addElementToList(tempElement.getTitle(), testList.getTitle());
+			}
 			
 		};
 	}

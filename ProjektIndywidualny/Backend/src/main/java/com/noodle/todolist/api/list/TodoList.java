@@ -1,10 +1,7 @@
 package com.noodle.todolist.api.list;
 
 import com.noodle.todolist.api.list.element.TodoElement;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
@@ -30,4 +27,11 @@ public class TodoList {
 			inverseJoinColumns = @JoinColumn(name = "elements_id")
 	)
 	private List<TodoElement> todoElements;
+	
+	public TodoList(TodoList copy) {
+		this.id = copy.getId();
+		this.title = copy.getTitle();
+		this.description = copy.getDescription();
+		this.todoElements = copy.getTodoElements();
+	}
 }

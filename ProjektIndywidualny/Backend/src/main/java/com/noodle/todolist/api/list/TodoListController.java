@@ -7,8 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -16,6 +14,8 @@ import java.util.List;
 public class TodoListController {
 	
 	private final TodoListService listService;
+	
+	private final int MAX_ELEMENTS_PER_PAGE = 5;
 	
 	@GetMapping("user/get")
 	public ResponseEntity<TodoList> getListForUser(@RequestParam String listTitle) {
@@ -25,6 +25,34 @@ public class TodoListController {
 	@GetMapping("admin/get")
 	public ResponseEntity<TodoList> getListForAdmin(@RequestParam String listTitle) {
 		return ResponseEntity.ok(listService.getList(listTitle));
+	}
+	
+	@GetMapping(value = {"user/get_paged/count", "admin/get_paged/count"})
+	public ResponseEntity<Long> getPagesCount() {
+		// TODO: Only list we modify in this demo.
+		TodoList list = listService.getList("test_list");
+		int elementCount = list.getTodoElements().size();
+		long pageCount = (long) Math.ceil((double) elementCount / MAX_ELEMENTS_PER_PAGE);
+		
+		return ResponseEntity.ok(pageCount);
+	}
+	
+	@GetMapping(value = {"user/get_paged/{pageNumber}", "admin/get_paged/{pageNumber}"})
+	public ResponseEntity<TodoList> getPagedList(@PathVariable(name = "pageNumber") Long pageNumber) {
+		// TODO: Only list we modify in this demo.
+		TodoList list = listService.getList("test_list");
+		
+		// Leave only elements from range:
+		// start = MAX_ELEMENTS_PER_PAGE * pageNumber
+		// end = start + MAX_ELEMENTS_PER_PAGE;
+		// [start, end)
+		TodoList pagedList = new TodoList(list);
+		int listSize = list.getTodoElements().size();
+		int startIndex = Math.min((int) (pageNumber * MAX_ELEMENTS_PER_PAGE), listSize);
+		int endIndex = Math.min(startIndex + MAX_ELEMENTS_PER_PAGE, listSize);
+		pagedList.setTodoElements(pagedList.getTodoElements().subList(startIndex, endIndex));
+		
+		return ResponseEntity.ok(pagedList);
 	}
 	
 	@PostMapping("admin/element/add/")
