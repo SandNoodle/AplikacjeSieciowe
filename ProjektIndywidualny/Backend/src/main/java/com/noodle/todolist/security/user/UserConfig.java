@@ -16,8 +16,8 @@ public class UserConfig {
 		return args -> {
 			
 			// Roles
-			userService.createRole(new Role(null, "ROLE_ADMIN", new ArrayList<>()));
-			userService.createRole(new Role(null, "ROLE_USER", new ArrayList<>()));
+			userService.createRole(new Role(null, "ROLE_ADMIN"));
+			userService.createRole(new Role(null, "ROLE_USER"));
 			
 			// Create Users
 			User adminUser = new User(null, "admin", "admin", new ArrayList<>());

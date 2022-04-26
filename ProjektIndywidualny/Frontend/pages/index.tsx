@@ -18,6 +18,11 @@ const Home: NextPage = () => {
 						<p className="text-sm font-medium italic">Probably.</p>
 
 						<div className="py-5 flex flex-col gap-2">
+							<Link href="/register">
+								<button className="uppercase transition duration-200 px-20 py-4 shadow-md hover:shadow-lg cursor-pointer font-bold text-xl rounded-lg bg-sky-500 hover:bg-sky-600 text-blue-100 hover:text-blue-50 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 ring-inset">
+									Register
+								</button>
+							</Link>
 							<Link href="/login">
 								<button className="uppercase transition duration-200 px-20 py-4 shadow-md hover:shadow-lg cursor-pointer font-bold text-xl rounded-lg bg-sky-500 hover:bg-sky-600 text-blue-100 hover:text-blue-50 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 ring-inset">
 									Login

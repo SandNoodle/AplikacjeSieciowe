@@ -9,6 +9,7 @@ import com.noodle.todolist.security.role.Role;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -65,6 +66,10 @@ public class UserController {
 	
 	@PostMapping("create/")
 	public ResponseEntity<User> createUser(@RequestBody User user) {
+		if(userService.getUser(user.getUsername()) != null) {
+			return ResponseEntity.status(FORBIDDEN).build();
+		}
+		
 		URI createUserUri = URI.create(
 				ServletUriComponentsBuilder
 						.fromCurrentContextPath()

@@ -77,6 +77,8 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 				.withIssuer(request.getRequestURL().toString())
 				.sign(algorithm);
 		
+		log.info("User '{}' succeeded to log in.", user.getUsername());
+		
 		// Put tokens into response body
 		Map<String, String> tokenMap = new HashMap<>();
 		tokenMap.put("access_token", accessToken);
