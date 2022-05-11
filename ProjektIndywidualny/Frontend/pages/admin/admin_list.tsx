@@ -1,3 +1,4 @@
+import React from "react";
 import type { GetServerSideProps, NextPage } from "next";
 import { TodoElement } from "components/list/admin_todoelement";
 import { useState, useEffect } from "react";
@@ -6,15 +7,14 @@ import { REST_API_IP } from "lib/server_requests";
 import { TodoListType, TodoElementType } from "types/list_types";
 import Cookies from "js-cookie";
 import Router from "next/router";
+import Link from "next/link";
 
 const AdminPage: NextPage = (props) => {
-	// TODO: Hardcoded.
-	const listTitle = "test_list";
+	const [pageNumber, setPageNumber] = useState(0);
+	const [pageCount, setPageCount] = useState(0);
 
 	// List
-	const [isLoading, setLoading] = useState(false);
 	const [listContent, setListContent] = useState<TodoListType>();
-	const [elementContent, setElementContent] = useState([]);
 
 	// Element Create
 	const [elementTitle, setElementTitle] = useState("");
@@ -76,8 +76,25 @@ const AdminPage: NextPage = (props) => {
 
 	// Load list
 	useEffect(() => {
-		setLoading(true);
-		fetch(`${REST_API_IP}/api/list/admin/get?listTitle=${listTitle}`, {
+		// Page count
+		fetch(`${REST_API_IP}/api/list/user/get_paged/count`, {
+			method: "GET",
+			headers: {
+				Authorization: `Bearer ${Cookies.get("user_token")}`,
+			},
+		})
+			.then((res) => {
+				return res.json();
+			})
+			.then((data) => {
+				setPageCount(data.page_count);
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+
+		// Page elements
+		fetch(`${REST_API_IP}/api/list/admin/get_paged/${pageNumber}`, {
 			headers: {
 				Authorization: `Bearer ${Cookies.get("user_token")}`,
 			},
@@ -91,14 +108,13 @@ const AdminPage: NextPage = (props) => {
 			})
 			.then((data) => {
 				setListContent(data);
-				setLoading(false);
 			});
-	}, []);
+	}, [pageNumber]);
 
 	// Return empty page when loading
 	if (!listContent) {
 		return (
-			<div className="w-screen h-screen justify-center items-center flex bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-700 to-lime-300"></div>
+			<div className="w-screen h-screen justify-center items-center flex bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-700"></div>
 		);
 	}
 
@@ -192,7 +208,7 @@ const AdminPage: NextPage = (props) => {
 					{elements !== undefined && elements.length > 0 ? (
 						elements.map((e) => {
 							// TODO: BAD HACK
-							if(e.status == true && filterOn || filterAll) {
+							if ((e.status == true && filterOn) || filterAll) {
 								return (
 									<TodoElement
 										key={e.id}
@@ -203,7 +219,7 @@ const AdminPage: NextPage = (props) => {
 									/>
 								);
 							}
-							if(e.status == false && filterOff || filterAll) {
+							if ((e.status == false && filterOff) || filterAll) {
 								return (
 									<TodoElement
 										key={e.id}
@@ -212,7 +228,7 @@ const AdminPage: NextPage = (props) => {
 										elementDescription={e.description}
 										elementStatus={e.status}
 									/>
-								);								
+								);
 							}
 						})
 					) : (
@@ -220,6 +236,34 @@ const AdminPage: NextPage = (props) => {
 							This list has no elements :c
 						</div>
 					)}
+
+					{/* Page */}
+					<div className="flex w-full h-full">
+						<div className="w-full h-1/2 flex gap-5 flex-col p-5 bg-white backdrop-filter backdrop-blur-lg bg-opacity-20 rounded-lg shadow-xl">
+							<div className="flex flex-wrap gap-5 justify-center">
+								{[...Array(pageCount).keys()].map(
+									(index: number) => (
+										<button
+											key={index}
+											value={index}
+											onClick={() => {
+												setPageNumber(index);
+											}}
+										>
+											<div className="w-12 h-12 p-2 bg-white jusitfy-center border-2 border-neutral-500 border-opacity-30 hover:border-opacity-80 align-middle backdrop-blur-lg bg-opacity-20 rounded-md shadow-md hover:shadow-lg hover:bg-opacity-80 transition duration-200">
+												<div className="flex justify-center items-center m-auto">
+													<h4 className="font-bold text-black text-center">
+														{index}
+													</h4>
+												</div>
+											</div>
+										</button>
+									)
+								)}
+							</div>
+						</div>
+					</div>
+
 					<div className="flex w-full h-full gap-12">
 						{/* Add new element */}
 						<div className="w-full h-full flex align-middle items-center justify-center">

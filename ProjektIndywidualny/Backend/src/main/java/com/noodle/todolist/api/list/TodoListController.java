@@ -7,6 +7,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -17,24 +20,16 @@ public class TodoListController {
 	
 	private final int MAX_ELEMENTS_PER_PAGE = 5;
 	
-	@GetMapping("user/get")
-	public ResponseEntity<TodoList> getListForUser(@RequestParam String listTitle) {
-		return ResponseEntity.ok(listService.getList(listTitle));
-	}
-	
-	@GetMapping("admin/get")
-	public ResponseEntity<TodoList> getListForAdmin(@RequestParam String listTitle) {
-		return ResponseEntity.ok(listService.getList(listTitle));
-	}
-	
 	@GetMapping(value = {"user/get_paged/count", "admin/get_paged/count"})
-	public ResponseEntity<Long> getPagesCount() {
+	public ResponseEntity<Map<String, Long>> getPagesCount() {
 		// TODO: Only list we modify in this demo.
 		TodoList list = listService.getList("test_list");
 		int elementCount = list.getTodoElements().size();
 		long pageCount = (long) Math.ceil((double) elementCount / MAX_ELEMENTS_PER_PAGE);
 		
-		return ResponseEntity.ok(pageCount);
+		Map<String, Long> response = new HashMap<>();
+		response.put("page_count", pageCount);
+		return ResponseEntity.ok().body(response);
 	}
 	
 	@GetMapping(value = {"user/get_paged/{pageNumber}", "admin/get_paged/{pageNumber}"})

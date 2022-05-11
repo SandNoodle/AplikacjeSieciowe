@@ -39,7 +39,7 @@ public class TodoListConfig {
 			listService.addElementToList(third.getTitle(), testList.getTitle());
 			
 			// Create random N elements
-			for(int i = 0; i < 23; i++) {
+			for(int i = 0; i < 100; i++) {
 				String tempTitle = "TEMP ELEMENT: " + i;
 				boolean status = ThreadLocalRandom.current().nextBoolean();
 				TodoElement tempElement = new TodoElement(null, tempTitle, "SOME RANDOM DESCRIPTION", status);
