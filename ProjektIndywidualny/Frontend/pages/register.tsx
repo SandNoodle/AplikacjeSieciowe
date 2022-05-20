@@ -1,23 +1,34 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import ReCAPTCHA from "react-google-recaptcha";
 
-import { REST_API_IP } from "lib/server_requests";
+import { CAPTCHA_SITE_KEY, REST_API_IP } from "lib/server_requests";
 
 function Register() {
+	const [username, setUsername] = useState("");
+	const [password, setPassword] = useState("");
+	const [isVerified, setVerified] = useState(false);
 
-	const [ username, setUsername ] = useState("");
-	const [ password, setPassword ] = useState("");
+	const onVerify = () => {
+		setVerified(true);
+		console.log(isVerified);
+	};
 
 	const registerUser = async (e) => {
 		e.preventDefault();
+		if (!isVerified) {
+			window.alert("Proszę zweryfikować CAPTCHA.");
+			return;
+		}
+
 		fetch(`${REST_API_IP}/api/user/create/`, {
 			method: "POST",
 			headers: {
-				"Content-Type": "application/json"
+				"Content-Type": "application/json",
 			},
 			body: JSON.stringify({
 				username: username,
-				password: password
+				password: password,
 			}),
 		})
 			.then((res) => res.json())
@@ -35,9 +46,7 @@ function Register() {
 					<div className="px-10 py-5 bg-white backdrop-filter backdrop-blur-lg bg-opacity-60 rounded-lg flex flex-col justify-center items-center shadow-xl divide-y divide-gray-400">
 						<div className="py-5">
 							{/* Register section */}
-							<form 
-							onSubmit={registerUser}
-							className="">
+							<form onSubmit={registerUser} className="">
 								<p className="mb-5 text-3xl font-bold uppercase text-slate-600">
 									Register an account
 								</p>
@@ -47,7 +56,9 @@ function Register() {
 									autoComplete="off"
 									placeholder="Username"
 									value={username}
-									onChange={(e) => setUsername(e.target.value)}
+									onChange={(e) =>
+										setUsername(e.target.value)
+									}
 									required
 									className="mb-5 p-3 w-80 rounded-md text-gray-900 border-gray-400 focus:border-gray-600 border-2 outline-none transition duration-200 focus:shadow-md"
 								/>
@@ -57,17 +68,28 @@ function Register() {
 									autoComplete="off"
 									placeholder="Password"
 									value={password}
-									onChange={(e) => setPassword(e.target.value)}
+									onChange={(e) =>
+										setPassword(e.target.value)
+									}
 									required
 									className="mb-5 p-3 w-80 rounded-md text-gray-900 border-gray-400 focus:border-gray-600 border-2 outline-none transition duration-200 focus:shadow-md"
 								/>
 								<button
 									type="submit"
 									id="login"
-									className="bg-rose-500 shadow hover:bg-rose-600 text-red-100 hover:text-red-50 uppercase font-bold p-2 rounded-md w-80 transition duration-200 hover:shadow-md"
+									className="mb-5 p-3 bg-rose-500 shadow hover:bg-rose-600 text-red-100 hover:text-red-50 uppercase font-bold rounded-md w-80 transition duration-200 hover:shadow-md"
 								>
 									Register
 								</button>
+
+								<div className="flex justify-center">
+									<ReCAPTCHA
+										className=""
+										required
+										sitekey={CAPTCHA_SITE_KEY}
+										onChange={onVerify}
+									/>
+								</div>
 							</form>
 						</div>
 						<div className="py-5">

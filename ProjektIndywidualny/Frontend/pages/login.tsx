@@ -1,17 +1,27 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Cookies from "js-cookie";
-import { REST_API_IP } from "lib/server_requests";
+import { CAPTCHA_SITE_KEY, REST_API_IP } from "lib/server_requests";
 import Router from "next/router";
+import ReCAPTCHA from "react-google-recaptcha";
 
 function Login() {
 	const [username, setUsername] = useState("");
 	const [password, setPassword] = useState("");
+	const [isVerified, setVerified] = useState(false);
 
-	// TODO: Login, redirection, _middleware.ts
+	const onVerify = () => {
+		setVerified(true);
+		console.log(isVerified);
+	};
 
 	const loginFunction = async (e) => {
 		e.preventDefault();
+		if (!isVerified) {
+			window.alert("Proszę zweryfikować CAPTCHA.");
+			return;
+		}
+		
 		fetch(
 			`${REST_API_IP}/api/login?username=${username}&password=${password}`
 		)
@@ -62,10 +72,19 @@ function Login() {
 								<button
 									type="submit"
 									id="login"
-									className="bg-sky-500 shadow hover:bg-sky-600 text-blue-100 hover:text-blue-50 uppercase font-bold p-2 rounded-md w-80 transition duration-200 hover:shadow-md"
+									className="mb-5 p-3 bg-sky-500 shadow hover:bg-sky-600 text-blue-100 hover:text-blue-50 uppercase font-bold rounded-md w-80 transition duration-200 hover:shadow-md"
 								>
 									Log in
 								</button>
+
+								<div className="flex justify-center">
+									<ReCAPTCHA
+										className=""
+										required
+										sitekey={CAPTCHA_SITE_KEY}
+										onChange={onVerify}
+									/>
+								</div>
 							</form>
 						</div>
 						<div className="py-5">
