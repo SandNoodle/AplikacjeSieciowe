@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import Cookies from "js-cookie";
 import { CAPTCHA_SITE_KEY, REST_API_IP } from "lib/server_requests";
@@ -21,7 +21,7 @@ function Login() {
 			window.alert("Proszę zweryfikować CAPTCHA.");
 			return;
 		}
-		
+
 		fetch(
 			`${REST_API_IP}/api/login?username=${username}&password=${password}`
 		)

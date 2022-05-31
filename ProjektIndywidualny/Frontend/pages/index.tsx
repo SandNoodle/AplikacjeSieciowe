@@ -3,7 +3,6 @@ import Link from "next/link";
 import { logoutFunction } from "lib/logout";
 
 const Home: NextPage = () => {
-
 	return (
 		<div className="h-screen w-screen overflow-hidden bg-gradient-to-br from-teal-400 via-sky-400 to-blue-500">
 			<div className="flex h-screen justify-center items-center">
@@ -41,9 +40,10 @@ const Home: NextPage = () => {
 								</button>
 							</Link>
 
-							<button 
-							onClick={logoutFunction}
-							className="uppercase transition duration-200 px-20 py-4 shadow-md hover:shadow-lg cursor-pointer font-bold text-xl rounded-lg bg-sky-500 hover:bg-sky-600 text-blue-100 hover:text-blue-50 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 ring-inset">
+							<button
+								onClick={logoutFunction}
+								className="uppercase transition duration-200 px-20 py-4 shadow-md hover:shadow-lg cursor-pointer font-bold text-xl rounded-lg bg-sky-500 hover:bg-sky-600 text-blue-100 hover:text-blue-50 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 ring-inset"
+							>
 								Logout
 							</button>
 						</div>

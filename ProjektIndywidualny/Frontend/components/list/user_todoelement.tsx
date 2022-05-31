@@ -18,11 +18,11 @@ export const TodoElement = (props: TodoListType) => {
 			{
 				method: "PUT",
 				headers: {
-					'Authorization': `Bearer ${Cookies.get('user_token')}`,
-				}
+					Authorization: `Bearer ${Cookies.get("user_token")}`,
+				},
 			}
 		);
-			Router.reload();
+		Router.reload();
 	};
 
 	return (

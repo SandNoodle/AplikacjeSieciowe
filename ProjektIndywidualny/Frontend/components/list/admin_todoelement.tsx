@@ -12,12 +12,15 @@ type TodoListType = {
 
 export const TodoElement = (props: TodoListType) => {
 	const deleteFunction = async () => {
-		fetch(`${REST_API_IP}/api/list/admin/element/remove/${props.elementId}`, {
-			method: "DELETE",
-			headers: {
-				'Authorization': `Bearer ${Cookies.get('user_token')}`,
+		fetch(
+			`${REST_API_IP}/api/list/admin/element/remove/${props.elementId}`,
+			{
+				method: "DELETE",
+				headers: {
+					Authorization: `Bearer ${Cookies.get("user_token")}`,
+				},
 			}
-		});
+		);
 		Router.reload();
 	};
 

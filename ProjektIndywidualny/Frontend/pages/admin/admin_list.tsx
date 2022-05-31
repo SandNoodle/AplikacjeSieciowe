@@ -7,7 +7,6 @@ import { REST_API_IP } from "lib/server_requests";
 import { TodoListType, TodoElementType } from "types/list_types";
 import Cookies from "js-cookie";
 import Router from "next/router";
-import Link from "next/link";
 
 const AdminPage: NextPage = (props) => {
 	const [pageNumber, setPageNumber] = useState(0);

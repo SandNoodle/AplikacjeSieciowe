@@ -1,4 +1,3 @@
-
 export type TodoElementType = {
 	id: number;
 	title: string;

@@ -1,4 +1,4 @@
-import type { GetServerSideProps, NextPage } from "next";
+import type { NextPage } from "next";
 import { TodoElement } from "components/list/user_todoelement";
 import { useState, useEffect } from "react";
 
@@ -38,7 +38,6 @@ const UserPage: NextPage = (props) => {
 			.catch((err) => {
 				console.log(err);
 			});
-
 
 		fetch(`${REST_API_IP}/api/list/user/get_paged/${pageNumber}`, {
 			headers: {
@@ -81,8 +80,8 @@ const UserPage: NextPage = (props) => {
 						<h2>{listContent.description}</h2>
 					</div>
 
-									{/* Filter */}
-									<div className="">
+					{/* Filter */}
+					<div className="">
 						<h4 className="">Filter:</h4>
 						<div className="">
 							<div className="form-check form-check-inline">
@@ -154,7 +153,7 @@ const UserPage: NextPage = (props) => {
 					{elements !== undefined && elements.length > 0 ? (
 						elements.map((e) => {
 							// TODO: BAD HACK
-							if(e.status == true && filterOn || filterAll) {
+							if ((e.status == true && filterOn) || filterAll) {
 								return (
 									<TodoElement
 										key={e.id}
@@ -165,7 +164,7 @@ const UserPage: NextPage = (props) => {
 									/>
 								);
 							}
-							if(e.status == false && filterOff || filterAll) {
+							if ((e.status == false && filterOff) || filterAll) {
 								return (
 									<TodoElement
 										key={e.id}
@@ -174,7 +173,7 @@ const UserPage: NextPage = (props) => {
 										elementDescription={e.description}
 										elementStatus={e.status}
 									/>
-								);								
+								);
 							}
 						})
 					) : (
